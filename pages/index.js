@@ -5,9 +5,11 @@ import styles from "./index.module.css";
 export default function Home() {
     const [promptInput, setPromptInput] = useState("");
     const [result, setResult] = useState();
+    const [loading, setLoading] = useState(false);
 
     async function onSubmit(event) {
         event.preventDefault();
+        setLoading(true);
         try {
             const response = await fetch("/api/generate", {
                 method: "POST",
@@ -18,6 +20,7 @@ export default function Home() {
             });
 
             const data = await response.json();
+            setLoading(false);
             if (response.status !== 200) {
                 throw (
                     data.error ||
@@ -45,6 +48,7 @@ export default function Home() {
                 <h3>Enter a ChatGPT prompt</h3>
                 <p className={styles.result}>{result}</p>
                 <form onSubmit={onSubmit}>
+                    <p>{loading ? "loading..." : ""}</p>
                     <textarea
                         style={{ padding: "1em", marginBottom: "30px" }}
                         autoComplete="false"
